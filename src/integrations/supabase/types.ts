@@ -14,7 +14,111 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          email: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_cart: {
+        Row: {
+          color: string
+          created_at: string
+          id: string
+          product_id: string
+          product_image: string
+          product_name: string
+          product_original_price: number | null
+          product_price: number
+          quantity: number
+          size: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          color: string
+          created_at?: string
+          id?: string
+          product_id: string
+          product_image: string
+          product_name: string
+          product_original_price?: number | null
+          product_price: number
+          quantity?: number
+          size: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          id?: string
+          product_id?: string
+          product_image?: string
+          product_name?: string
+          product_original_price?: number | null
+          product_price?: number
+          quantity?: number
+          size?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_wishlist: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          product_image: string
+          product_name: string
+          product_original_price: number | null
+          product_price: number
+          secondary_image: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          product_image: string
+          product_name: string
+          product_original_price?: number | null
+          product_price: number
+          secondary_image?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          product_image?: string
+          product_name?: string
+          product_original_price?: number | null
+          product_price?: number
+          secondary_image?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
