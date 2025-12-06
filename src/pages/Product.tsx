@@ -3,6 +3,9 @@ import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { useCart } from "@/contexts/CartContext";
+import { useWishlist } from "@/contexts/WishlistContext";
+import { toast } from "@/hooks/use-toast";
 import {
   Heart,
   Share2,
@@ -98,6 +101,64 @@ const Product = () => {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<"description" | "care" | "size">("description");
   const [isZoomed, setIsZoomed] = useState(false);
+
+  const { addToCart } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
+  const inWishlist = isInWishlist(productData.id);
+
+  const handleAddToCart = () => {
+    if (!selectedSize) {
+      toast({
+        title: "Please select a size",
+        description: "Choose your preferred size before adding to cart.",
+        variant: "destructive",
+      });
+      return;
+    }
+    addToCart({
+      id: productData.id,
+      name: productData.name,
+      price: productData.price,
+      originalPrice: productData.originalPrice,
+      image: productData.images[0],
+      size: selectedSize,
+      color: selectedColor.name,
+      quantity,
+    });
+    toast({
+      title: "Added to Cart",
+      description: `${productData.name} has been added to your cart.`,
+    });
+  };
+
+  const handleBuyNow = () => {
+    if (!selectedSize) {
+      toast({
+        title: "Please select a size",
+        description: "Choose your preferred size before proceeding.",
+        variant: "destructive",
+      });
+      return;
+    }
+    handleAddToCart();
+    window.location.href = "/cart";
+  };
+
+  const handleWishlist = () => {
+    toggleWishlist({
+      id: productData.id,
+      name: productData.name,
+      price: productData.price,
+      originalPrice: productData.originalPrice,
+      image: productData.images[0],
+    });
+    toast({
+      title: inWishlist ? "Removed from Wishlist" : "Added to Wishlist",
+      description: inWishlist
+        ? `${productData.name} removed from your wishlist.`
+        : `${productData.name} saved to your wishlist.`,
+    });
+  };
 
   const discount = Math.round(
     ((productData.originalPrice - productData.price) / productData.originalPrice) * 100
@@ -287,14 +348,21 @@ const Product = () => {
                     <Plus size={18} />
                   </button>
                 </div>
-                <button className="flex-1 btn-royal rounded-lg">Add to Cart</button>
-                <button className="p-4 border border-border rounded-lg hover:border-primary hover:text-primary transition-colors">
-                  <Heart size={20} />
+                <button onClick={handleAddToCart} className="flex-1 btn-royal rounded-lg">Add to Cart</button>
+                <button 
+                  onClick={handleWishlist}
+                  className={`p-4 border rounded-lg transition-colors ${
+                    inWishlist 
+                      ? "border-destructive text-destructive" 
+                      : "border-border hover:border-primary hover:text-primary"
+                  }`}
+                >
+                  <Heart size={20} className={inWishlist ? "fill-current" : ""} />
                 </button>
               </div>
 
               {/* Buy Now */}
-              <button className="w-full btn-outline-gold rounded-lg">Buy Now</button>
+              <button onClick={handleBuyNow} className="w-full btn-outline-gold rounded-lg">Buy Now</button>
 
               {/* Trust Features */}
               <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
