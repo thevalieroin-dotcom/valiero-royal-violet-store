@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, Menu, X, Search, User } from "lucide-react";
+import { ShoppingBag, Menu, X, Search, User, Heart } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
+import { useWishlist } from "@/contexts/WishlistContext";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -15,6 +17,8 @@ const navLinks = [
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { totalItems } = useCart();
+  const { items: wishlistItems } = useWishlist();
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/50">
@@ -52,10 +56,21 @@ export const Header = () => {
           </nav>
 
           {/* Icons */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
             <button className="p-2 text-foreground/80 hover:text-accent transition-colors">
               <Search size={20} />
             </button>
+            <Link
+              to="/wishlist"
+              className="relative p-2 text-foreground/80 hover:text-accent transition-colors"
+            >
+              <Heart size={20} />
+              {wishlistItems.length > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground text-xs font-bold rounded-full flex items-center justify-center">
+                  {wishlistItems.length}
+                </span>
+              )}
+            </Link>
             <button className="hidden md:block p-2 text-foreground/80 hover:text-accent transition-colors">
               <User size={20} />
             </button>
@@ -64,9 +79,11 @@ export const Header = () => {
               className="relative p-2 text-foreground/80 hover:text-accent transition-colors"
             >
               <ShoppingBag size={20} />
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground text-xs font-bold rounded-full flex items-center justify-center">
-                0
-              </span>
+              {totalItems > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground text-xs font-bold rounded-full flex items-center justify-center">
+                  {totalItems}
+                </span>
+              )}
             </Link>
           </div>
         </div>
@@ -96,6 +113,13 @@ export const Header = () => {
                   {link.name}
                 </Link>
               ))}
+              <Link
+                to="/wishlist"
+                onClick={() => setIsMenuOpen(false)}
+                className="block py-2 text-lg font-medium tracking-wide uppercase text-foreground/80 hover:text-accent transition-colors"
+              >
+                Wishlist ({wishlistItems.length})
+              </Link>
             </nav>
           </motion.div>
         )}

@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Heart, Eye } from "lucide-react";
+import { useWishlist } from "@/contexts/WishlistContext";
+import { useCart } from "@/contexts/CartContext";
+import { toast } from "@/hooks/use-toast";
 
 interface ProductCardProps {
   id: string;
@@ -24,6 +27,38 @@ export const ProductCard = ({
   isNew,
 }: ProductCardProps) => {
   const discount = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
+  const { isInWishlist, toggleWishlist } = useWishlist();
+  const { addToCart } = useCart();
+  const inWishlist = isInWishlist(id);
+
+  const handleWishlistClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleWishlist({ id, name, price, originalPrice, image, secondaryImage });
+    toast({
+      title: inWishlist ? "Removed from Wishlist" : "Added to Wishlist",
+      description: inWishlist ? `${name} removed from your wishlist.` : `${name} saved to your wishlist.`,
+    });
+  };
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addToCart({
+      id,
+      name,
+      price,
+      originalPrice,
+      image,
+      size: "M",
+      color: "Violet",
+      quantity: 1,
+    });
+    toast({
+      title: "Added to Cart",
+      description: `${name} has been added to your cart.`,
+    });
+  };
 
   return (
     <motion.div
@@ -71,10 +106,13 @@ export const ProductCard = ({
           {/* Quick Actions */}
           <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <button
-              className="p-2 bg-background/90 rounded-lg text-foreground hover:text-primary transition-colors"
-              aria-label="Add to wishlist"
+              onClick={handleWishlistClick}
+              className={`p-2 bg-background/90 rounded-lg transition-colors ${
+                inWishlist ? "text-destructive" : "text-foreground hover:text-primary"
+              }`}
+              aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
             >
-              <Heart size={18} />
+              <Heart size={18} className={inWishlist ? "fill-current" : ""} />
             </button>
             <button
               className="p-2 bg-background/90 rounded-lg text-foreground hover:text-primary transition-colors"
@@ -86,7 +124,10 @@ export const ProductCard = ({
 
           {/* Add to Cart Button */}
           <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-            <button className="w-full py-3 bg-primary text-primary-foreground text-sm font-semibold uppercase tracking-wider rounded hover:bg-primary/90 transition-colors">
+            <button 
+              onClick={handleAddToCart}
+              className="w-full py-3 bg-primary text-primary-foreground text-sm font-semibold uppercase tracking-wider rounded hover:bg-primary/90 transition-colors"
+            >
               Add to Cart
             </button>
           </div>

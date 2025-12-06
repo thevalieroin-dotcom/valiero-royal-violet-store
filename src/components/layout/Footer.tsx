@@ -10,10 +10,10 @@ const footerLinks = {
     { name: "New Arrivals", path: "/collections/new" },
   ],
   help: [
-    { name: "FAQs", path: "/faqs" },
-    { name: "Shipping Policy", path: "/shipping" },
-    { name: "Return Policy", path: "/returns" },
-    { name: "Track Order", path: "/track" },
+    { name: "FAQs", path: "/faq" },
+    { name: "Shipping Policy", path: "/faq" },
+    { name: "Return Policy", path: "/faq" },
+    { name: "Track Order", path: "/faq" },
   ],
   company: [
     { name: "About Us", path: "/about" },
