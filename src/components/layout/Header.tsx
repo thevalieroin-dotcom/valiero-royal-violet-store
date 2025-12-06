@@ -1,9 +1,17 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, Menu, X, Search, User, Heart } from "lucide-react";
+import { ShoppingBag, Menu, X, Search, User, Heart, LogOut } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -19,6 +27,11 @@ export const Header = () => {
   const location = useLocation();
   const { totalItems } = useCart();
   const { items: wishlistItems } = useWishlist();
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/50">
@@ -71,9 +84,48 @@ export const Header = () => {
                 </span>
               )}
             </Link>
-            <button className="hidden md:block p-2 text-foreground/80 hover:text-accent transition-colors">
-              <User size={20} />
-            </button>
+
+            {/* User Menu */}
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="p-2 text-accent hover:text-accent/80 transition-colors">
+                    <User size={20} />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <div className="px-2 py-1.5 text-sm text-muted-foreground truncate">
+                    {user.email}
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/wishlist" className="cursor-pointer">
+                      <Heart className="mr-2" size={16} />
+                      My Wishlist
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/cart" className="cursor-pointer">
+                      <ShoppingBag className="mr-2" size={16} />
+                      My Cart
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive">
+                    <LogOut className="mr-2" size={16} />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link
+                to="/auth"
+                className="hidden md:block p-2 text-foreground/80 hover:text-accent transition-colors"
+              >
+                <User size={20} />
+              </Link>
+            )}
+
             <Link
               to="/cart"
               className="relative p-2 text-foreground/80 hover:text-accent transition-colors"
@@ -120,6 +172,25 @@ export const Header = () => {
               >
                 Wishlist ({wishlistItems.length})
               </Link>
+              {user ? (
+                <button
+                  onClick={() => {
+                    handleSignOut();
+                    setIsMenuOpen(false);
+                  }}
+                  className="block py-2 text-lg font-medium tracking-wide uppercase text-destructive hover:text-destructive/80 transition-colors"
+                >
+                  Sign Out
+                </button>
+              ) : (
+                <Link
+                  to="/auth"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="block py-2 text-lg font-medium tracking-wide uppercase text-foreground/80 hover:text-accent transition-colors"
+                >
+                  Sign In
+                </Link>
+              )}
             </nav>
           </motion.div>
         )}
