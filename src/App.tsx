@@ -9,6 +9,7 @@ import { WishlistProvider } from "@/contexts/WishlistContext";
 import Index from "./pages/Index";
 import Collection from "./pages/Collection";
 import Product from "./pages/Product";
+import ShopifyProduct from "./pages/ShopifyProduct";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import FAQ from "./pages/FAQ";
@@ -32,6 +33,7 @@ const App = () => (
                 <Route path="/" element={<Index />} />
                 <Route path="/collections/:category" element={<Collection />} />
                 <Route path="/product/:id" element={<Product />} />
+                <Route path="/product/:handle" element={<ShopifyProduct />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/faq" element={<FAQ />} />
